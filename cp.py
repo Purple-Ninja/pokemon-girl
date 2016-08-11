@@ -3,21 +3,42 @@
 from PIL import Image, ImageFont, ImageDraw
 import os
 
-text = u'My future girlfriend CP: 945'
+text = u'future girlfriend CP: 290'
 text_color = (255,255,255)
 fonts_path = 'fonts/MyanmarSangamMN.ttf'
 
-shadowcolor = (128, 128, 128)
+# file io
 
-img = Image.open("girl.png")
+input_image = 'girl.png'
+output_image = '.'.join(input_image.split('.')[:-1]) + '-cp.png'
 
-# img = img.convert("RGBA")
+# text shadow
+shadowcolor = (212, 212, 212)
 
-draw = ImageDraw.Draw(img)
+font_size = 26
+
+# prepare font
+
+font = ImageFont.truetype(font=fonts_path, size=font_size, index=0, encoding='')
+
+
+# input image
+
+img = Image.open(input_image).convert('RGBA')
+
+# image resize to h:675
 
 img_w, img_h = img.size
 
-print img.size
+img_ratio = img_w/float(img_h)
+
+img = img.resize( ( int(675.0*img_ratio) ,675) )
+
+img_w, img_h = img.size
+
+# draw
+
+draw = ImageDraw.Draw(img)
 
 ## poke ball
 
@@ -27,19 +48,15 @@ pokeball = pokeball.convert('RGBA')
 
 pokeball_w, pokeball_h = pokeball.size
 
-pokeball_offset = (img_w - pokeball_w)/2, img_h-pokeball_h-25
+# pokeball = pokeball.resize( (184, 184), Image.ANTIALIAS)
+
+pokeball_offset = (img_w - pokeball_w)/2, int(img_h - pokeball_h - img_h/625.0*25)
+
+text_w, text_h = draw.textsize(text, font) # (42, 11)
 
 # text
 
-text_w, text_h = draw.textsize(text) # (42, 11)
-
-print (text_w, text_h)
-
-x, y = (img_w - text_w*2 + len(text))/2.0, round((img_h / 9.0)/2)
-
-print (x,y)
-
-font = ImageFont.truetype(font=fonts_path, size=26, index=0, encoding='')
+x, y = (img_w - text_w - len(text))/2.0, round((img_h / 9.0)/2)
 
 # outline
 
@@ -50,11 +67,12 @@ draw.text((x, y+1), text, font=font, fill=shadowcolor)
 
 draw.text((x, y), text, text_color, font=font)
 
-
 # paste 
 
 img.paste(pokeball, pokeball_offset, mask=pokeball) # the transparancy layer will be used as the mask
 
-img.save('girl-cp.png')
+# save and close
+
+img.save(output_image)
 
 img.close()

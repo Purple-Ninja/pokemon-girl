@@ -13,3 +13,7 @@ $ mkvirtualenv pokemon-girl
 $ pip install -r requirements.txt
 $ python cp.py
 ```
+
+## Preview
+
+![img-before](girl.png) ![img-after](girl-cp.png)

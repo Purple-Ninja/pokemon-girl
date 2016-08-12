@@ -2,11 +2,12 @@
 
 from PIL import Image, ImageFont, ImageDraw
 
-text = u'Hot girl CP: 520'
+text = u'hot chick CP: 520'
 text_color = (255,255,255)
 fonts_path = 'fonts/MyanmarSangamMN.ttf'
-shadowcolor = (255, 255, 255)
-font_size = 26
+# shadowcolor = (255, 255, 255)
+shadowcolor = None
+font_size = 24
 
 input_image = 'girl.png'
 output_image = '.'.join(input_image.split('.')[:-1]) + '-cp.png'
@@ -46,11 +47,12 @@ def draw_text(draw, text_position, text, text_color, font):
     draw.text(text_position, text, text_color, font=font)
 
 def draw_text_outline(text, text_position, font, shadowcolor):
-    x, y = text_position
-    draw.text((x-1, y), text, font=font, fill=shadowcolor)
-    draw.text((x+1, y), text, font=font, fill=shadowcolor)
-    draw.text((x, y-1), text, font=font, fill=shadowcolor)
-    draw.text((x, y+1), text, font=font, fill=shadowcolor)
+    if shadowcolor:
+        x, y = text_position
+        draw.text((x-1, y), text, font=font, fill=shadowcolor)
+        draw.text((x+1, y), text, font=font, fill=shadowcolor)
+        draw.text((x, y-1), text, font=font, fill=shadowcolor)
+        draw.text((x, y+1), text, font=font, fill=shadowcolor)
 
 def paste_pokeball(img, pokeball, pokeball_offset):
     img.paste(pokeball, pokeball_offset, mask=pokeball)
@@ -61,6 +63,7 @@ def save_image(img, output_image):
 
 if __name__ == '__main__':
 
+    print '> load image'
     img = load_image(input_image)
 
     img = resize_image(img)
@@ -71,6 +74,7 @@ if __name__ == '__main__':
 
     pokeball_offset = get_pokeball_offset(img.size, pokeball.size)
 
+    print '> drawing text'
     font = get_font(fonts_path, font_size)
 
     text_size = get_text_size(draw, text, font)
@@ -81,6 +85,9 @@ if __name__ == '__main__':
 
     draw_text_outline(text, text_position, font, shadowcolor)
 
+    print '> paste pokeball'
     paste_pokeball(img, pokeball, pokeball_offset)
 
     save_image(img, output_image)
+
+    print '> done'

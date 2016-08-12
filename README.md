@@ -11,7 +11,12 @@
 ```
 $ mkvirtualenv pokemon-girl
 $ pip install -r requirements.txt
+
+# process image localy
 $ python cp.py
+
+# web service
+$ python server.py
 ```
 
 ## Preview

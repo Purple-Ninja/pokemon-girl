@@ -1,16 +1,7 @@
 # encoding: utf8
 
 from PIL import Image, ImageFont, ImageDraw
-
-text = u'hot chick CP: 520'
-text_color = (255,255,255)
-fonts_path = 'fonts/MyanmarSangamMN.ttf'
-# shadowcolor = (255, 255, 255)
-shadowcolor = None
-font_size = 24
-
-input_image = 'girl.png'
-output_image = '.'.join(input_image.split('.')[:-1]) + '-cp.png'
+import StringIO
 
 def load_image(input_image):
     return Image.open(input_image).convert('RGBA')
@@ -61,14 +52,23 @@ def save_image(img, output_image):
     img.save(output_image)
     img.close()
 
-if __name__ == '__main__':
+def save_image_stream(img):
+    img_io = StringIO.StringIO()
+    img.save(img_io, format='PNG')
+    img_io.seek(0)
+    return img_io
+    # contents = output.getvalue()
+    # output.close()
+    # return contents
+
+def makeup(input_image, text, text_color, fonts_path, shadowcolor, font_size, save=True):
 
     print '> load image'
     img = load_image(input_image)
 
     img = resize_image(img)
 
-    draw = draw(img)
+    d = draw(img)
 
     pokeball = load_pokeball()
 
@@ -77,17 +77,34 @@ if __name__ == '__main__':
     print '> drawing text'
     font = get_font(fonts_path, font_size)
 
-    text_size = get_text_size(draw, text, font)
+    text_size = get_text_size(d, text, font)
 
     text_position = get_text_position(img, text, text_size)
 
-    draw_text(draw, text_position, text, text_color, font)
+    draw_text(d, text_position, text, text_color, font)
 
     draw_text_outline(text, text_position, font, shadowcolor)
 
     print '> paste pokeball'
     paste_pokeball(img, pokeball, pokeball_offset)
 
-    save_image(img, output_image)
+    output_image = '.'.join(input_image.split('.')[:-1]) + '-cp.png'
+
+    if save:
+        save_image(img, output_image)
+    else:
+        return save_image_stream(img)
 
     print '> done'
+
+if __name__ == '__main__':
+
+    text = u'hot chick CP: 520'
+    text_color = (255,255,255)
+    fonts_path = 'fonts/MyanmarSangamMN.ttf'
+    # shadowcolor = (255, 255, 255)
+    shadowcolor = None
+    font_size = 24
+    input_image = 'girl.png'
+
+    makeup(input_image, text, text_color, fonts_path, shadowcolor, font_size, save=True)
